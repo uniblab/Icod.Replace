@@ -98,7 +98,7 @@ namespace Icod.Replace {
 			System.Console.Error.WriteLine( "No, no, no! Use it like this, Einstein:" );
 			System.Console.Error.WriteLine( "Replace.exe --help" );
 			System.Console.Error.WriteLine( "Replace.exe --copyright" );
-			System.Console.Error.WriteLine( "Replace.exe --original theOriginal --with theReplacement --mode (StartsWith | Contains | EndsWith) [--compare (CurrentCulture | CurrentCultureIgnoreCase | InvariantCulture | InvariantCultureIgnoreCase | Ordinal | OrdinalIgnoreCase)] [--input inputFilePathName] [--output outputFilePathName]" );
+			System.Console.Error.WriteLine( "Replace.exe (-o | --original | /original) theOriginal (-w | --with | /with) theReplacement (-m | --mode | /mode) (StartsWith | Contains | EndsWith) [(-cmd | --compare | /compere) (CurrentCulture | CurrentCultureIgnoreCase | InvariantCulture | InvariantCultureIgnoreCase | Ordinal | OrdinalIgnoreCase)] [(-i | --input | /input) inputFilePathName] [(-o | --output | /output) outputFilePathName] [(-t | --trim | /trim)]" );
 			System.Console.Error.WriteLine( "Replace.exe replaces the specified string with another specified string for each line of input." );
 			System.Console.Error.WriteLine( "The default value for the --compare switch is CurrentCulture." );
 			System.Console.Error.WriteLine( "inputFilePathName and outputFilePathName may be relative or absolute paths." );
