@@ -110,7 +110,6 @@ namespace Icod.Replace {
 				"Replace.exe replaces the specified string with another specified string for each line of input.",
 				"Copyright (C) 2023 Timothy J. Bruce",
 				"",
-				"",
 				"This program is free software: you can redistribute it and / or modify",
 				"it under the terms of the GNU General Public License as published by",
 				"the Free Software Foundation, either version 3 of the License, or",
@@ -118,7 +117,7 @@ namespace Icod.Replace {
 				"",
 				"This program is distributed in the hope that it will be useful,",
 				"but WITHOUT ANY WARRANTY; without even the implied warranty of",
-				"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the",
+				"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
 				"GNU General Public License for more details.",
 				"",
 				"You should have received a copy of the GNU General Public License",
@@ -183,7 +182,7 @@ namespace Icod.Replace {
 		}
 		#endregion io
 
-		private static System.String? TrimToNull( this System.String @string ) {
+		private static System.String? TrimToNull( this System.String? @string ) {
 			if ( System.String.IsNullOrEmpty( @string ) ) {
 				return null;
 			}
