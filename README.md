@@ -8,12 +8,13 @@ Displays this text.
 `Replace.exe --copyright`
 Displays copyright and licensing information.
 
-`Replace.exe --original theOriginal --with theReplacement --mode (StartsWith | Contains | EndsWith) [--compare (CurrentCulture | CurrentCultureIgnoreCase | InvariantCulture | InvariantCultureIgnoreCase | Ordinal | OrdinalIgnoreCase)] [--input inputFilePathName] [--output outputFilePathName]`
+`Replace.exe (-o | --original | /original) theOriginal (-w | --with | /with) theReplacement (-m | --mode | /mode) (StartsWith | Contains | EndsWith) [(-cmd | --compare | /compere) (CurrentCulture | CurrentCultureIgnoreCase | InvariantCulture | InvariantCultureIgnoreCase | Ordinal | OrdinalIgnoreCase)] [(-i | --input | /input) inputFilePathName] [(-o | --output | /output) outputFilePathName] [(-t | --trim | /trim)]`
 Replace.exe replaces the specified string with another specified string for each line of input.
 The default value for the --compare switch is CurrentCulture.
 inputFilePathName and outputFilePathName may be relative or absolute paths.
 If inputFilePathName is omitted then input is read from StdIn.
 If outputFilePathName is omitted then output is written to StdOut.
+If --trim switch is specified, then input lines are trimmed of all surrounding whitespace and empty lines are ignored.
 
 Replace.exe does not use Regular Expressions.
 
