@@ -121,15 +121,15 @@ namespace Icod.Replace {
 
 		private static void PrintUsage() {
 			System.Console.Error.WriteLine( "No, no, no! Use it like this, Einstein:" );
-			System.Console.Error.WriteLine( "Replace.exe --help" );
-			System.Console.Error.WriteLine( "Replace.exe --copyright" );
+			System.Console.Error.WriteLine( "Replace.exe (-h | --help | /help)" );
+			System.Console.Error.WriteLine( "Replace.exe (-c | --copyright | /copyright)" );
 			System.Console.Error.WriteLine( "Replace.exe (-o | --original | /original) theOriginal (-w | --with | /with) theReplacement [(-cmd | --compare | /compere) (CurrentCulture | CurrentCultureIgnoreCase | InvariantCulture | InvariantCultureIgnoreCase | Ordinal | OrdinalIgnoreCase)] [(-i | --input | /input) inputFilePathName] [(--output | /output) outputFilePathName] [(-t | --trim | /trim)]" );
 			System.Console.Error.WriteLine( "Replace.exe replaces the specified string with another specified string for each line of input." );
-			System.Console.Error.WriteLine( "The default value for the --compare switch is CurrentCulture." );
+			System.Console.Error.WriteLine( "The default value for the compare switch is CurrentCulture." );
 			System.Console.Error.WriteLine( "inputFilePathName and outputFilePathName may be relative or absolute paths." );
 			System.Console.Error.WriteLine( "If inputFilePathName is omitted then input is read from StdIn." );
 			System.Console.Error.WriteLine( "If outputFilePathName is omitted then output is written to StdOut." );
-			System.Console.Error.WriteLine( "If --trim switch is specified, then input lines are trimmed of all surrounding whitespace and empty lines are ignored." );
+			System.Console.Error.WriteLine( "If trim switch is specified, then input lines are trimmed of all surrounding whitespace and empty lines are ignored." );
 		}
 		private static void PrintCopyright() {
 			var copy = new System.String[] {

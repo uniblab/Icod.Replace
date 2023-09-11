@@ -2,19 +2,19 @@
 Replace.exe replaces a specified string with another for every line of input.
 
 ## Usage
-`Replace.exe --help`
+`Replace.exe (-h | --help | /help)`
 Displays this text.
 
-`Replace.exe --copyright`
+`Replace.exe (-c | --copyright | /copyright)`
 Displays copyright and licensing information.
 
 `Replace.exe (-o | --original | /original) theOriginal (-w | --with | /with) theReplacement [(-cmd | --compare | /compere) (CurrentCulture | CurrentCultureIgnoreCase | InvariantCulture | InvariantCultureIgnoreCase | Ordinal | OrdinalIgnoreCase)] [(-i | --input | /input) inputFilePathName] [(--output | /output) outputFilePathName] [(-t | --trim | /trim)]`
 Replace.exe replaces the specified string with another specified string for each line of input.
-The default value for the --compare switch is CurrentCulture.
+The default value for the compare switch is CurrentCulture.
 inputFilePathName and outputFilePathName may be relative or absolute paths.
 If inputFilePathName is omitted then input is read from StdIn.
 If outputFilePathName is omitted then output is written to StdOut.
-If --trim switch is specified, then input lines are trimmed of all surrounding whitespace and empty lines are ignored.
+If trim switch is specified, then input lines are trimmed of all surrounding whitespace and empty lines are ignored.
 
 Replace.exe does not use Regular Expressions.
 
