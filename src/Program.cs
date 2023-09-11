@@ -25,70 +25,95 @@ namespace Icod.Replace {
 
 		[System.STAThread]
 		public static System.Int32 Main( System.String[] args ) {
-			if ( null == args ) {
-				args = new System.String[ 0 ];
-			}
 			var len = args.Length;
-			if ( ( 1 <= len ) && ( new System.String[] { "--copyright", "-c", "/c" }.Contains( args[ 0 ], System.StringComparer.OrdinalIgnoreCase ) ) ) {
+			if ( 10 < len ) {
+				PrintUsage();
+				return 1;
+			}
+
+			var processor = new Icod.Argh.Processor(
+				new Icod.Argh.Definition[] {
+					new Icod.Argh.Definition( "help", new System.String[] { "-h", "--help", "/help" } ),
+					new Icod.Argh.Definition( "copyright", new System.String[] { "-c", "--copyright", "/copyright" } ),
+					new Icod.Argh.Definition( "original", new System.String[] { "-o", "--original", "/original" } ),
+					new Icod.Argh.Definition( "with", new System.String[] { "-w", "--with", "/with" } ),
+					new Icod.Argh.Definition( "input", new System.String[] { "-i", "--input", "/input" } ),
+					new Icod.Argh.Definition( "output", new System.String[] { "--output", "/output" } ),
+					new Icod.Argh.Definition( "compare", new System.String[] { "-cmp", "--compare", "/compare" } ),
+					new Icod.Argh.Definition( "trim", new System.String[] { "-t", "--trim", "/trim" } ),
+				},
+				System.StringComparer.OrdinalIgnoreCase
+			);
+			processor.Parse( args );
+
+			if ( processor.Contains( "help" ) ) {
+				PrintUsage();
+				return 1;
+			} else if ( processor.Contains( "copyright" ) ) {
 				PrintCopyright();
 				return 1;
-			} else if ( ( 1 <= len ) && ( new System.String[] { "--help", "-h", "/h" }.Contains( args[ 0 ], System.StringComparer.OrdinalIgnoreCase ) ) ) {
-				PrintUsage();
-				return 1;
-			} else if ( ( len < 4 ) || ( 12 < len ) ) {
+			}
+
+			var trim = processor.Contains( "trim" );
+			System.Func<System.String, System.String?> trimmer;
+			if ( trim ) {
+				trimmer = x => x.TrimToNull();
+			} else {
+				trimmer = x => x;
+			}
+
+			if (
+				( !processor.TryGetValue( "original", false, out var original ) )
+				|| System.String.IsNullOrEmpty( original )
+			) {
 				PrintUsage();
 				return 1;
 			}
-			--len;
-			System.String? inputPathName = null;
-			System.String? outputPathName = null;
-			System.String? original = System.String.Empty;
-			System.String? with = System.String.Empty;
-			System.StringComparison compare = System.StringComparison.CurrentCulture;
-			System.String @switch;
-			System.Int32 i = -1;
-			do {
-				@switch = args[ ++i ];
-				if ( new System.String[] { "--help", "-h", "/h" }.Contains( inputPathName, System.StringComparer.OrdinalIgnoreCase ) ) {
-					PrintUsage();
-					return 1;
-				} else if ( new System.String[] { "--copyright", "-c", "/c" }.Contains( inputPathName, System.StringComparer.OrdinalIgnoreCase ) ) {
-					PrintCopyright();
-					return 1;
-				} else if ( "--input".Equals( @switch, System.StringComparison.OrdinalIgnoreCase ) ) {
-					inputPathName = args[ ++i ].TrimToNull();
-				} else if ( "--output".Equals( @switch, System.StringComparison.OrdinalIgnoreCase ) ) {
-					outputPathName = args[ ++i ].TrimToNull();
-				} else if ( "--original".Equals( @switch, System.StringComparison.OrdinalIgnoreCase ) ) {
-					original = args[ ++i ];
-				} else if ( "--with".Equals( @switch, System.StringComparison.OrdinalIgnoreCase ) ) {
-					with = args[ ++i ];
-				} else if ( "--compare".Equals( @switch, System.StringComparison.OrdinalIgnoreCase ) ) {
-					compare = (System.StringComparison)System.Enum.Parse( typeof( System.StringComparison ), args[ ++i ].TrimToNull()!, true );
-				} else {
-					PrintUsage();
-					return 1;
-				}
-			} while ( i < len );
+
+			if ( !processor.TryGetValue( "with", false, out var with ) ) {
+				PrintUsage();
+				return 1;
+			}
+
+			if ( !processor.TryGetValue( "compare", true, out var compareStr ) ) {
+				compareStr = "CurrentCulture";
+			}
+			if (
+				System.String.IsNullOrEmpty( compareStr )
+				|| ( !System.Enum.TryParse( typeof( System.StringComparison ), compareStr, out var compare ) )
+			) {
+				PrintUsage();
+				return 1;
+			}
 
 			System.Func<System.String?, System.Collections.Generic.IEnumerable<System.String>> reader;
-			if ( System.String.IsNullOrEmpty( inputPathName ) ) {
-				reader = a => ReadStdIn();
+			if ( processor.TryGetValue( "input", true, out var inputPathName ) ) {
+				if ( System.String.IsNullOrEmpty( inputPathName ) ) {
+					PrintUsage();
+					return 1;
+				} else {
+					reader = a => ReadFile( a! );
+				}
 			} else {
-				reader = a => ReadFile( a! );
+				reader = a => ReadStdIn();
 			}
 
 			System.Action<System.String?, System.Collections.Generic.IEnumerable<System.String>> writer;
-			if ( System.String.IsNullOrEmpty( outputPathName ) ) {
-				writer = ( a, b ) => WriteStdOut( b );
+			if ( processor.TryGetValue( "output", true, out var outputPathName ) ) {
+				if ( System.String.IsNullOrEmpty( outputPathName ) ) {
+					PrintUsage();
+					return 1;
+				} else {
+					writer = ( a, b ) => WriteFile( a!, b );
+				}
 			} else {
-				writer = ( a, b ) => WriteFile( a!, b );
+				writer = ( a, b ) => WriteStdOut( b );
 			}
 
 			writer(
 				outputPathName,
 				reader( inputPathName ).Select(
-					x => x.Replace( original, with )
+					x => x.Replace( original, with, (System.StringComparison)compare )
 				)
 			);
 			return 0;
@@ -98,12 +123,13 @@ namespace Icod.Replace {
 			System.Console.Error.WriteLine( "No, no, no! Use it like this, Einstein:" );
 			System.Console.Error.WriteLine( "Replace.exe --help" );
 			System.Console.Error.WriteLine( "Replace.exe --copyright" );
-			System.Console.Error.WriteLine( "Replace.exe (-o | --original | /original) theOriginal (-w | --with | /with) theReplacement (-m | --mode | /mode) (StartsWith | Contains | EndsWith) [(-cmd | --compare | /compere) (CurrentCulture | CurrentCultureIgnoreCase | InvariantCulture | InvariantCultureIgnoreCase | Ordinal | OrdinalIgnoreCase)] [(-i | --input | /input) inputFilePathName] [(-o | --output | /output) outputFilePathName] [(-t | --trim | /trim)]" );
+			System.Console.Error.WriteLine( "Replace.exe (-o | --original | /original) theOriginal (-w | --with | /with) theReplacement [(-cmd | --compare | /compere) (CurrentCulture | CurrentCultureIgnoreCase | InvariantCulture | InvariantCultureIgnoreCase | Ordinal | OrdinalIgnoreCase)] [(-i | --input | /input) inputFilePathName] [(--output | /output) outputFilePathName] [(-t | --trim | /trim)]" );
 			System.Console.Error.WriteLine( "Replace.exe replaces the specified string with another specified string for each line of input." );
 			System.Console.Error.WriteLine( "The default value for the --compare switch is CurrentCulture." );
 			System.Console.Error.WriteLine( "inputFilePathName and outputFilePathName may be relative or absolute paths." );
 			System.Console.Error.WriteLine( "If inputFilePathName is omitted then input is read from StdIn." );
 			System.Console.Error.WriteLine( "If outputFilePathName is omitted then output is written to StdOut." );
+			System.Console.Error.WriteLine( "If --trim switch is specified, then input lines are trimmed of all surrounding whitespace and empty lines are ignored." );
 		}
 		private static void PrintCopyright() {
 			var copy = new System.String[] {
