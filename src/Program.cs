@@ -16,6 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using Icod.Helpers;
+
 namespace Icod.Replace {
 
 	public static class Program {
@@ -92,10 +94,10 @@ namespace Icod.Replace {
 					PrintUsage();
 					return 1;
 				} else {
-					reader = a => ReadFile( a! );
+					reader = a => a!.ReadLine();
 				}
 			} else {
-				reader = a => ReadStdIn();
+				reader = a => System.Console.In.ReadLine( System.Environment.NewLine );
 			}
 
 			System.Action<System.String?, System.Collections.Generic.IEnumerable<System.String>> writer;
@@ -104,16 +106,17 @@ namespace Icod.Replace {
 					PrintUsage();
 					return 1;
 				} else {
-					writer = ( a, b ) => WriteFile( a!, b );
+					writer = ( a, b ) => a!.WriteLine( b );
 				}
 			} else {
-				writer = ( a, b ) => WriteStdOut( b );
+				writer = ( a, b ) => System.Console.Out.WriteLine( lineEnding: System.Environment.NewLine, data: b );
 			}
 
+			var c = (System.StringComparison)compare;
 			writer(
 				outputPathName,
 				reader( inputPathName ).Select(
-					x => x.Replace( original, with, (System.StringComparison)compare )
+					x => x.Replace( original, with, c )
 				)
 			);
 			return 0;
@@ -152,71 +155,6 @@ namespace Icod.Replace {
 			foreach ( var line in copy ) {
 				System.Console.WriteLine( line );
 			}
-		}
-
-		#region io
-		private static System.Collections.Generic.IEnumerable<System.String> ReadStdIn() {
-			var line = System.Console.In.ReadLine();
-			while ( null != line ) {
-				line = line.TrimToNull();
-				if ( null != line ) {
-					yield return line;
-				}
-				line = System.Console.In.ReadLine();
-			}
-		}
-		private static System.Collections.Generic.IEnumerable<System.String> ReadFile( System.String? filePathName ) {
-			filePathName = filePathName?.TrimToNull();
-			if ( System.String.IsNullOrEmpty( filePathName ) ) {
-				throw new System.ArgumentNullException( nameof( filePathName ) );
-			}
-			using ( var file = System.IO.File.Open( filePathName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read ) ) {
-				using ( var reader = new System.IO.StreamReader( file, System.Text.Encoding.UTF8, true, theBufferSize, true ) ) {
-					var line = reader.ReadLine();
-					while ( null != line ) {
-						line = line.TrimToNull();
-						if ( null != line ) {
-							yield return line;
-						}
-						line = reader.ReadLine();
-					}
-				}
-			}
-		}
-
-		private static void WriteStdOut( System.Collections.Generic.IEnumerable<System.String> data ) {
-			foreach ( var datum in data ) {
-				System.Console.Out.WriteLine( datum );
-			}
-		}
-		private static void WriteFile( System.String? filePathName, System.Collections.Generic.IEnumerable<System.String> data ) {
-			filePathName = filePathName?.TrimToNull();
-			if ( System.String.IsNullOrEmpty( filePathName ) ) {
-				throw new System.ArgumentNullException( nameof( filePathName ) );
-			}
-			using ( var file = System.IO.File.Open( filePathName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.None ) ) {
-				_ = file.Seek( 0, System.IO.SeekOrigin.Begin );
-				using ( var writer = new System.IO.StreamWriter( file, System.Text.Encoding.UTF8, theBufferSize, true ) ) {
-					foreach ( var datum in data ) {
-						writer.WriteLine( datum );
-					}
-					writer.Flush();
-				}
-				file.Flush();
-				file.SetLength( file.Position );
-			}
-		}
-		#endregion io
-
-		private static System.String? TrimToNull( this System.String? @string ) {
-			if ( System.String.IsNullOrEmpty( @string ) ) {
-				return null;
-			}
-			@string = @string.Trim();
-			return System.String.IsNullOrEmpty( @string )
-				? null
-				: @string
-			;
 		}
 
 	}
