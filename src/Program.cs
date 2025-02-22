@@ -1,5 +1,5 @@
 ﻿// Replace.exe replaces the specified string with another specified string for each line of input.
-// Copyright (C) 2023 Timothy J. Bruce
+// Copyright (C) 2025 Timothy J. Bruce
 
 /*
     This program is free software: you can redistribute it and/or modify
@@ -137,7 +137,7 @@ namespace Icod.Replace {
 		private static void PrintCopyright() {
 			var copy = new System.String[] {
 				"Replace.exe replaces the specified string with another specified string for each line of input.",
-				"Copyright (C) 2023 Timothy J. Bruce",
+				"Copyright (C) 2025 Timothy J. Bruce",
 				"",
 				"This program is free software: you can redistribute it and / or modify",
 				"it under the terms of the GNU General Public License as published by",
